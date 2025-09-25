@@ -9,29 +9,62 @@ class WorkoutDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("${workout.dayType} Workout")),
+      appBar: AppBar(title: const Text("Mission Report")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Workout summary
-            Text(
-              "Date: ${workout.date.toLocal().toString().split(' ')[0]}",
-              style: const TextStyle(fontSize: 16),
+            // Workout header card
+            Card(
+              color: Colors.yellow[700],
+              elevation: 6,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "🗓 Date: ${workout.date.toLocal().toString().split(' ')[0]}",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Workout Type: ${workout.dayType}",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
 
-            // Exercises
+            const SizedBox(height: 20),
+
+            // Exercises list
             ...workout.exercises.map((exercise) {
               return Card(
+                elevation: 4,
                 margin: const EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        exercise.name,
+                        "💪 ${exercise.name}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -39,22 +72,29 @@ class WorkoutDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       if (exercise.sets.isEmpty)
-                        const Text("No sets logged")
+                        const Text("No sets recorded")
                       else
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                            exercise.sets.length,
-                            (index) => Text(
-                              "Set ${index + 1}: ${exercise.sets[index]} reps",
-                            ),
-                          ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: exercise.sets
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            final i = entry.key;
+                            final set = entry.value;
+                            return Chip(
+                              label: Text(
+                                "Set ${i + 1}: ${set.reps} × ${set.weight} lbs",
+                              ),
+                            );
+                          }).toList(),
                         ),
                     ],
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),

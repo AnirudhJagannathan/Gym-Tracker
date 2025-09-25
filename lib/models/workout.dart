@@ -26,7 +26,19 @@ class Exercise extends HiveObject {
   String name;
 
   @HiveField(1)
-  List<int> sets; // reps only for now
+  List<SetEntry> sets; // 👈 now a list of SetEntry objects
 
   Exercise({required this.name, required this.sets});
 }
+
+@HiveType(typeId: 2)
+class SetEntry extends HiveObject {
+  @HiveField(0)
+  int reps;
+
+  @HiveField(1)
+  double weight; // in kg or lbs
+
+  SetEntry({required this.reps, required this.weight});
+}
+
